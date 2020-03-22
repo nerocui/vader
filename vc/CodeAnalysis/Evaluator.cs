@@ -20,6 +20,16 @@ namespace Vader.CodeAnalysis
         {
             if (node is LiteralExpressionSyntax n)
                 return (int) n.LiteralToken.Value;
+            if (node is UnaryExpressionSyntax u)
+            {
+                var operand = EvaluateExpression(u.Operand);
+                if (u.OperatirToken.Kind == SyntaxKind.PlusToken)
+                    return operand;
+                else if (u.OperatirToken.Kind == SyntaxKind.MinusToken)
+                    return -operand;
+                else
+                    throw new Exception($"Error: Unexpected unary operator {u.OperatirToken.Kind}");
+            }
             if (node is BinaryExpressionSyntax b)
             {
                 var left = EvaluateExpression(b.Left);

@@ -57,15 +57,26 @@ namespace Vader.CodeAnalysis
 
         private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
-            var left = ParsePrimaryExpression();
+            ExpressionSyntax left;
+            var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
+            if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
+            {
+                var operatorToken = NextToken();
+                var operand = ParseExpression(unaryOperatorPrecedence);
+                left = new UnaryExpressionSyntax(operatorToken, operand);
+            }
+            else
+            {
+                left = ParsePrimaryExpression();
+            }
             while (true)
             {
                 var precedfence = Current.Kind.GetBinaryOperatorPrecedence();
                 if (precedfence == 0 || precedfence <= parentPrecedence)
                     break;
-                var operatirToken = NextToken();
+                var operatorToken = NextToken();
                 var right = ParseExpression(precedfence);
-                left = new BinaryExpressionSyntax(left, operatirToken, right);
+                left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
             return left;
         }

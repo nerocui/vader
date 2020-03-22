@@ -17,6 +17,7 @@ namespace Vader.CodeAnalysis
         //expressions
         BinaryExpression,
         ParenthesizedExpression,
-        LiteralExpression
+        LiteralExpression,
+        UnaryExpression
     }
 }
