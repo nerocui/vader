@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Vader.CodeAnalysis;
+using Vader.CodeAnalysis.Syntax;
 
 namespace Vader
 {

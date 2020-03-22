@@ -1,4 +1,4 @@
-namespace Vader.CodeAnalysis
+namespace Vader.CodeAnalysis.Syntax
 {
     public enum SyntaxKind
     {

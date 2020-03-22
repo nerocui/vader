@@ -1,4 +1,5 @@
 using System;
+using Vader.CodeAnalysis.Syntax;
 
 namespace Vader.CodeAnalysis
 {
