@@ -14,7 +14,7 @@ namespace Vader.CodeAnalysis
             SyntaxToken token;
             do
             {
-                token = lexer.NextToken();
+                token = lexer.Lex();
                 if (token.Kind != SyntaxKind.BadToken && token.Kind != SyntaxKind.WhitespaceToken)
                 {
                     tokens.Add(token);
