@@ -15,8 +15,8 @@ namespace Vader.CodeAnalysis
         CloseParenthesisToken,
 
         //expressions
-        NumberExpression,
         BinaryExpression,
-        ParenthesizedExpression
+        ParenthesizedExpression,
+        LiteralExpression
     }
 }
