@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Vader.CodeAnalysis
 {
-    sealed class BinaryExpressionSyntax : ExpressionSyntax
+    public sealed class BinaryExpressionSyntax : ExpressionSyntax
     {
         public BinaryExpressionSyntax(ExpressionSyntax left, SyntaxToken operatirToken, ExpressionSyntax right)
         {
