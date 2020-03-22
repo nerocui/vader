@@ -1,17 +1,20 @@
 namespace Vader.CodeAnalysis
 {
-    enum SyntaxKind
+    public enum SyntaxKind
     {
-        NumberToken,
+        //tokens
+        BadToken,
+        EndOfFileToken,
         WhitespaceToken,
+        NumberToken,
         PlusToken,
         MinusToken,
         StarToken,
         SlashToken,
         OpenParenthesisoken,
         CloseParenthesisToken,
-        BadToken,
-        EndOfFileToken,
+
+        //expressions
         NumberExpression,
         BinaryExpression,
         ParenthesizedExpression

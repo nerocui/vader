@@ -5,9 +5,9 @@ using Vader.CodeAnalysis;
 
 namespace Vader
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var showTree = false;
             while (true)
@@ -32,12 +32,11 @@ namespace Vader
 
                 var syntaxTree = SyntaxTree.Parse(line);
 
-                var color = Console.ForegroundColor;
                 if (showTree)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     PrettyPrint(syntaxTree.Root);
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
 
                 if (!syntaxTree.Diagnostics.Any())
@@ -54,7 +53,7 @@ namespace Vader
                         Console.WriteLine(diagnostic);
                     }
                 }
-                Console.ForegroundColor = color;
+                Console.ResetColor();
             }
         }
 
@@ -74,7 +73,7 @@ namespace Vader
                 Console.Write(t.Value);
             }
             Console.WriteLine();
-            indent += isLast ? "    " : "│   ";
+            indent += isLast ? "   " : "│  ";
             foreach (var child in node.GetChildren())
                 PrettyPrint(child, indent, child == node.GetChildren().LastOrDefault());
         }

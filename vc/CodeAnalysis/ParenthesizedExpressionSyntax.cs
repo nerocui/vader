@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Vader.CodeAnalysis
 {
-    sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
+    public sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
     {
         public ParenthesizedExpressionSyntax(SyntaxToken openParenthesisoken, ExpressionSyntax expression, SyntaxToken closeParenthesisToken)
         {
