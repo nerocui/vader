@@ -55,36 +55,18 @@ namespace Vader.CodeAnalysis
             return new SyntaxTree(_diagnostics, expression, endOfFile);
         }
 
-        private ExpressionSyntax ParseExpression()
-        {
-            return ParseTerm();
-        }
-
-        private ExpressionSyntax ParseTerm()
-        {
-            var left = ParseFactor();
-            while (Current.Kind == SyntaxKind.PlusToken ||
-                   Current.Kind == SyntaxKind.MinusToken)
-            {
-                var operatorToken = NextToken();
-                var right = ParseFactor();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-
-            return left;
-        }
-
-        private ExpressionSyntax ParseFactor()
+        private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
             var left = ParsePrimaryExpression();
-            while (Current.Kind == SyntaxKind.StarToken ||
-                   Current.Kind == SyntaxKind.SlashToken)
+            while (true)
             {
-                var operatorToken = NextToken();
-                var right = ParsePrimaryExpression();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
+                var precedfence = Current.Kind.GetBinaryOperatorPrecedence();
+                if (precedfence == 0 || precedfence <= parentPrecedence)
+                    break;
+                var operatirToken = NextToken();
+                var right = ParseExpression(precedfence);
+                left = new BinaryExpressionSyntax(left, operatirToken, right);
             }
-
             return left;
         }
 
