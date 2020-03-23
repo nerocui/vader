@@ -1,3 +1,5 @@
+using System;
+
 namespace Vader.CodeAnalysis.Syntax
 {
     internal static class SyntaxFacts
@@ -25,6 +27,19 @@ namespace Vader.CodeAnalysis.Syntax
                     return 2;
                 default:
                     return 0;
+            }
+        }
+
+        public static SyntaxKind GetKeywordKind(string text)
+        {
+            switch (text)
+            {
+                case "true":
+                    return SyntaxKind.TrueKeyword;
+                case "false":
+                    return SyntaxKind.FalseKeyword;
+                default:
+                    return SyntaxKind.IdentifierToken;
             }
         }
     }

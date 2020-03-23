@@ -14,7 +14,7 @@ namespace Vader
             var showTree = false;
             while (true)
             {
-                Console.WriteLine(">");
+                Console.Write(">");
                 var line = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(line))
                     return;
