@@ -5,8 +5,8 @@ namespace Vader.CodeAnalysis.Syntax
     public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
         public LiteralExpressionSyntax(SyntaxToken literalToken)
+            : this(literalToken, literalToken.Value)
         {
-            LiteralToken = literalToken;
         }
 
         public LiteralExpressionSyntax(SyntaxToken literalToken, object value)

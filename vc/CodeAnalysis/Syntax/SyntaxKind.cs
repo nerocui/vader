@@ -21,6 +21,10 @@ namespace Vader.CodeAnalysis.Syntax
         UnaryExpression,
         IdentifierToken,
         FalseKeyword,
-        TrueKeyword
+        TrueKeyword,
+        BangToken,
+        AmpersandToken,
+        AmpersandAmpersandToken,
+        PipePipeToken
     }
 }
