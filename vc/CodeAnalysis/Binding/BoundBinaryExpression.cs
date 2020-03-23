@@ -15,7 +15,7 @@ namespace Vader.CodeAnalysis.Binding
         public BoundBinaryOperator Op { get; }
         public BoundExpression Right { get; }
 
-        public override Type Type => Left.Type;
+        public override Type Type => Op.ResultType;
 
         public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
     }

@@ -91,6 +91,8 @@ namespace Vader.CodeAnalysis.Syntax
                 case ')':
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
                 case '!':
+                    if (LookHead == '=')
+                        return new SyntaxToken(SyntaxKind.BangEqualToken, _position += 2, "!=", null);
                     return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
                 case '&':
                     if (LookHead == '&')
@@ -100,6 +102,11 @@ namespace Vader.CodeAnalysis.Syntax
                     if (LookHead == '|')
                         return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "&&", null);
                     break;
+                case '=':
+                    if (LookHead == '=')
+                        return new SyntaxToken(SyntaxKind.EqualEqualToken, _position += 2, "==", null);
+                    break;
+                
             }
 
             _diagnostics.Add($"Error: Bad char input: '{Current}'");
