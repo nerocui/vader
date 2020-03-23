@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Vader.CodeAnalysis
+namespace Vader.CodeAnalysis.Syntax
 {
     public sealed class SyntaxTree
     {

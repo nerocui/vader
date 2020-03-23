@@ -1,4 +1,4 @@
-namespace Vader.CodeAnalysis
+namespace Vader.CodeAnalysis.Syntax
 {
     public enum SyntaxKind
     {
@@ -17,6 +17,16 @@ namespace Vader.CodeAnalysis
         //expressions
         BinaryExpression,
         ParenthesizedExpression,
-        LiteralExpression
+        LiteralExpression,
+        UnaryExpression,
+        IdentifierToken,
+        FalseKeyword,
+        TrueKeyword,
+        BangToken,
+        AmpersandToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
+        EqualEqualToken,
+        BangEqualToken
     }
 }
