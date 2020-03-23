@@ -4,20 +4,20 @@ namespace Vader.CodeAnalysis.Syntax
 {
     public sealed class UnaryExpressionSyntax : ExpressionSyntax
     {
-        public UnaryExpressionSyntax(SyntaxToken operatirToken, ExpressionSyntax operand)
+        public UnaryExpressionSyntax(SyntaxToken operatorToken, ExpressionSyntax operand)
         {
-            OperatirToken = operatirToken;
+            OperatorToken = operatorToken;
             Operand = operand;
         }
 
         public override SyntaxKind Kind => SyntaxKind.UnaryExpression;
 
-        public SyntaxToken OperatirToken { get; }
+        public SyntaxToken OperatorToken { get; }
         public ExpressionSyntax Operand { get; }
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            yield return OperatirToken;
+            yield return OperatorToken;
             yield return Operand;
         }
     }

@@ -1,13 +1,14 @@
 using System;
+using Vader.CodeAnalysis.Binding;
 using Vader.CodeAnalysis.Syntax;
 
 namespace Vader.CodeAnalysis
 {
-    public class Evaluator
+    internal sealed class Evaluator
     {
-        private readonly ExpressionSyntax _root;
+        private readonly BoundExpression _root;
 
-        public Evaluator(ExpressionSyntax root)
+        public Evaluator(BoundExpression root)
         {
             _root = root;
         }
@@ -17,39 +18,42 @@ namespace Vader.CodeAnalysis
             return EvaluateExpression(_root);
         }
 
-        private int EvaluateExpression(ExpressionSyntax node)
+        private int EvaluateExpression(BoundExpression node)
         {
-            if (node is LiteralExpressionSyntax n)
-                return (int) n.LiteralToken.Value;
-            if (node is UnaryExpressionSyntax u)
+            if (node is BoundLiteralExpression n)
+                return (int) n.Value;
+            if (node is BoundUnaryExpression u)
             {
                 var operand = EvaluateExpression(u.Operand);
-                if (u.OperatirToken.Kind == SyntaxKind.PlusToken)
-                    return operand;
-                else if (u.OperatirToken.Kind == SyntaxKind.MinusToken)
-                    return -operand;
-                else
-                    throw new Exception($"Error: Unexpected unary operator {u.OperatirToken.Kind}");
+                switch (u.OperatorKind)
+                {
+                    case BoundUnaryOperatorKind.Identity:
+                        return operand;
+                    case BoundUnaryOperatorKind.Negation:
+                        return -operand;
+                    default:
+                        throw new Exception($"Error: Unexpected unary operator {u.OperatorKind}");
+                }
             }
-            if (node is BinaryExpressionSyntax b)
+            if (node is BoundBinaryExpression b)
             {
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
 
-                if (b.OperatirToken.Kind == SyntaxKind.PlusToken)
-                    return left + right;
-                else if (b.OperatirToken.Kind == SyntaxKind.MinusToken)
-                    return left - right;
-                else if (b.OperatirToken.Kind == SyntaxKind.StarToken)
-                    return left * right;
-                else if (b.OperatirToken.Kind == SyntaxKind.SlashToken)
-                    return left / right;
-                else
-                    throw new Exception($"Error: Unexpected binary operator {b.OperatirToken.Kind}");
+                switch (b.OperatorKind)
+                {
+                    case BoundBinaryOperatorKind.Addition:
+                        return left + right;
+                    case BoundBinaryOperatorKind.Subtraction:
+                        return left - right;
+                    case BoundBinaryOperatorKind.Multiplication:
+                        return left * right;
+                    case BoundBinaryOperatorKind.Division:
+                        return left / right;
+                    default:
+                        throw new Exception($"Error: Unexpected binary operator {b.OperatorKind}");
+                }
             }
-
-            if (node is ParenthesizedExpressionSyntax p)
-                return EvaluateExpression(p.Expression);
             throw new Exception($"Error: Unexpected node {node.Kind}");
         }
     }
