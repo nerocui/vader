@@ -25,7 +25,7 @@ namespace Vader.CodeAnalysis
             if (node is BoundUnaryExpression u)
             {
                 var operand = EvaluateExpression(u.Operand);
-                switch (u.OperatorKind)
+                switch (u.Op.Kind)
                 {
                     case BoundUnaryOperatorKind.Identity:
                         return (int)operand;
@@ -34,7 +34,7 @@ namespace Vader.CodeAnalysis
                     case BoundUnaryOperatorKind.LogicalNegation:
                         return !(bool)operand;
                     default:
-                        throw new Exception($"Error: Unexpected unary operator {u.OperatorKind}");
+                        throw new Exception($"Error: Unexpected unary operator {u.Op}");
                 }
             }
             if (node is BoundBinaryExpression b)
@@ -42,7 +42,7 @@ namespace Vader.CodeAnalysis
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
 
-                switch (b.OperatorKind)
+                switch (b.Op.Kind)
                 {
                     case BoundBinaryOperatorKind.Addition:
                         return (int)left + (int)right;
@@ -57,7 +57,7 @@ namespace Vader.CodeAnalysis
                     case BoundBinaryOperatorKind.LogicalOr:
                         return (bool)left || (bool)right;
                     default:
-                        throw new Exception($"Error: Unexpected binary operator {b.OperatorKind}");
+                        throw new Exception($"Error: Unexpected binary operator {b.Op}");
                 }
             }
             throw new Exception($"Error: Unexpected node {node.Kind}");
