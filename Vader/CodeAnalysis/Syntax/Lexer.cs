@@ -6,13 +6,13 @@ namespace Vader.CodeAnalysis.Syntax
     {
         private readonly string _text;
         private int _position;
-        private List<string> _diagnostics = new List<string>();
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
 
         public Lexer(string text)
         {
             _text = text;
         }
-        public IEnumerable<string> Diagnostics => _diagnostics;
+        public DiagnosticBag Diagnostics => _diagnostics;
         private char Current => Peek(0);
         private char LookHead => Peek(1);
 
@@ -35,10 +35,9 @@ namespace Vader.CodeAnalysis.Syntax
             {
                 return new SyntaxToken(SyntaxKind.EndOfFileToken, _position, "\0", null);
             }
+            var start = _position;
             if (char.IsDigit(Current))
             {
-                var start = _position;
-
                 while (char.IsDigit(Current))
                     Next();
                 
@@ -46,15 +45,13 @@ namespace Vader.CodeAnalysis.Syntax
                 var text = _text.Substring(start, length);
                 if (!int.TryParse(text, out var value))
                 {
-                    _diagnostics.Add($"Error: The number {_text} is not a valid Int32");
+                    _diagnostics.ReportInvalidNumber(new TextSpan(start, length), _text, typeof(int));
                 }
                 return new SyntaxToken(SyntaxKind.NumberToken, start, text, value);
             }
 
             if (char.IsLetter(Current))
             {
-                var start = _position;
-
                 while (char.IsLetter(Current))
                     Next();
                 
@@ -66,8 +63,6 @@ namespace Vader.CodeAnalysis.Syntax
 
             if (char.IsWhiteSpace(Current))
             {
-                var start = _position;
-
                 while (char.IsWhiteSpace(Current))
                     Next();
                 
@@ -92,24 +87,36 @@ namespace Vader.CodeAnalysis.Syntax
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
                 case '!':
                     if (LookHead == '=')
-                        return new SyntaxToken(SyntaxKind.BangEqualToken, _position += 2, "!=", null);
+                    {
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.BangEqualToken, start, "!=", null);
+                    }
                     return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
                 case '&':
                     if (LookHead == '&')
-                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, _position += 2, "&&", null);
+                    {
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, start, "&&", null);
+                    }
                     break;
                 case '|':
                     if (LookHead == '|')
-                        return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "&&", null);
+                    {
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, start, "||", null);
+                    }
                     break;
                 case '=':
                     if (LookHead == '=')
-                        return new SyntaxToken(SyntaxKind.EqualEqualToken, _position += 2, "==", null);
+                    {
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.EqualEqualToken, start, "==", null);
+                    }
                     break;
                 
             }
 
-            _diagnostics.Add($"Error: Bad char input: '{Current}'");
+            _diagnostics.ReportBadCharacter(_position, Current);
             return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position - 1, 1), null);
         }
     }

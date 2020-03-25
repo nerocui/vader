@@ -1,10 +1,9 @@
 using System;
 using Vader.CodeAnalysis.Binding;
-using Vader.CodeAnalysis.Syntax;
 
 namespace Vader.CodeAnalysis
 {
-    internal sealed class Evaluator
+    internal sealed partial class Evaluator
     {
         private readonly BoundExpression _root;
 
