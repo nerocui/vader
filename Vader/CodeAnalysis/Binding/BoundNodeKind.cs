@@ -4,6 +4,8 @@ namespace Vader.CodeAnalysis.Binding
     {
         UnaryExpression,
         LiteralExpression,
-        BinaryExpression
+        BinaryExpression,
+        VariableExpression,
+        AssignmentExpression
     }
 }

@@ -6,8 +6,15 @@ namespace Vader.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
-        private DiagnosticBag _diagnostics = new DiagnosticBag();
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+        private readonly Dictionary<string, object> _variables;
+
         public DiagnosticBag Diagnostics => _diagnostics;
+        public Binder(Dictionary<string, object> variables)
+        {
+            _variables = variables;
+        }
+
         public BoundExpression BindExpression(ExpressionSyntax syntax)
         {
             switch (syntax.Kind)
@@ -19,10 +26,47 @@ namespace Vader.CodeAnalysis.Binding
                 case SyntaxKind.BinaryExpression:
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
                 case SyntaxKind.ParenthesizedExpression:
-                    return BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression);
+                    return BindParenthesizedExpression((ParenthesizedExpressionSyntax)syntax);
+                case SyntaxKind.NameExpression:
+                    return BindNameExpression((NameExpressionSyntax)syntax);
+                case SyntaxKind.AssignmentExpression:
+                    return BindAssignmentExpression((AssignmentExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Error: Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
+        {
+            var name = syntax.IdentitifierToken.Text;
+            if (!_variables.TryGetValue(name, out var value))
+            {
+                _diagnostics.ReportUndefinedName(syntax.IdentitifierToken.Span, name);
+                return new BoundLiteralExpression(0);
+            }
+            var type = value.GetType();
+            return new BoundVariableExpression(name, type);
+        }
+
+        private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
+        {
+            var name = syntax.IdentifierToken.Text;
+            var boundExpression = BindExpression(syntax.Expression);
+            var defaultValue =
+                boundExpression.Type == typeof(int)
+                ? (object)0
+                : boundExpression.Type == typeof(bool) 
+                ? (object)false
+                : null;
+            if (defaultValue == null)
+                throw new Exception($"Error: Unexpected variable type: {boundExpression.Type}");
+            _variables[name] = defaultValue;
+            return new BoundAssignmentExpression(name, boundExpression);
+        }
+
+        private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax syntax)
+        {
+            return BindExpression(syntax.Expression);
         }
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)

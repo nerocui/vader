@@ -54,5 +54,11 @@ namespace Vader.CodeAnalysis
             var message = $"Error: Binary operator '{operatorText}' is not defined for type {leftType} and {rightType}.";
             Report(span, message);
         }
+
+        public void ReportUndefinedName(TextSpan span, string name)
+        {
+            var message = $"Error: Variable {name} doesn't exist.";
+            Report(span, message);
+        }
     }
 }

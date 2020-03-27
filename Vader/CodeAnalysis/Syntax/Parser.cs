@@ -55,14 +55,31 @@ namespace Vader.CodeAnalysis.Syntax
             return new SyntaxTree(_diagnostics, expression, endOfFile);
         }
 
-        private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
+        private ExpressionSyntax ParseExpression()
+        {
+            return ParseAssignmentExpression();
+        }
+
+        private ExpressionSyntax ParseAssignmentExpression()
+        {
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.EqualsToken)
+            {
+                var identifier = NextToken();
+                var operatorToken = NextToken();
+                var right = ParseAssignmentExpression();
+                return new AssignmentExpressionSyntax(identifier, operatorToken, right);
+            }
+            return ParseBinaryExpression();
+        }
+
+        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
         {
             ExpressionSyntax left;
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
-                var operand = ParseExpression(unaryOperatorPrecedence);
+                var operand = ParseBinaryExpression(unaryOperatorPrecedence);
                 left = new UnaryExpressionSyntax(operatorToken, operand);
             }
             else
@@ -76,7 +93,7 @@ namespace Vader.CodeAnalysis.Syntax
                 if (precedfence == 0 || precedfence <= parentPrecedence)
                     break;
                 var operatorToken = NextToken();
-                var right = ParseExpression(precedfence);
+                var right = ParseBinaryExpression(precedfence);
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
             return left;
@@ -89,7 +106,7 @@ namespace Vader.CodeAnalysis.Syntax
                 case SyntaxKind.OpenParenthesisoken:
                 {
                     var left = NextToken();
-                    var expression = ParseExpression();
+                    var expression = ParseBinaryExpression();
                     var right = MatchToken(SyntaxKind.CloseParenthesisToken);
                     return new ParenthesizedExpressionSyntax(left, expression, right);
                 }
@@ -100,6 +117,11 @@ namespace Vader.CodeAnalysis.Syntax
                     var value = Current.Kind == SyntaxKind.TrueKeyword;
                     var keywordToken = NextToken();
                     return new LiteralExpressionSyntax(keywordToken, value);
+                }
+                case SyntaxKind.IdentifierToken:
+                {
+                    var identifierToken = NextToken();
+                    return new NameExpressionSyntax(identifierToken);
                 }
                 default:
                 {
