@@ -27,6 +27,9 @@ namespace Vader.CodeAnalysis.Syntax
         AmpersandAmpersandToken,
         PipePipeToken,
         EqualEqualToken,
-        BangEqualToken
+        BangEqualToken,
+        NameExpression,
+        AssignmentExpression,
+        EqualsToken
     }
 }

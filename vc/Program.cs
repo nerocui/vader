@@ -12,6 +12,7 @@ namespace Vader
         static void Main()
         {
             var showTree = false;
+            var variables = new Dictionary<VariableSymbol,object>();
             while (true)
             {
                 Console.Write(">");
@@ -33,8 +34,8 @@ namespace Vader
                 }
 
                 var syntaxTree = SyntaxTree.Parse(line);
-                var binder = new Binder();
-                var boundExpression = binder.BindExpression(syntaxTree.Root);
+                var compilation = new Compilation(syntaxTree);
+                var result = compilation.Evaluate(variables);
                 if (showTree)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -42,19 +43,32 @@ namespace Vader
                     Console.ResetColor();
                 }
 
-                IEnumerable<string> diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
+                var diagnostics = result.Diagnostics;
                 if (!diagnostics.Any())
                 {
-                    var e = new Evaluator(boundExpression);
-                    var result = e.Evaluate();
-                    Console.WriteLine($"Result is: {result}");
+                    Console.WriteLine($"Result is: {result.Value}");
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     foreach (var diagnostic in diagnostics)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(diagnostic);
+                        Console.ResetColor();
+
+                        var prefix = line.Substring(0, diagnostic.Span.Start);
+                        var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
+                        var suffix = line.Substring(diagnostic.Span.End);
+                        
+                        Console.Write("    ");
+                        Console.Write(prefix);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(error);
+                        Console.ResetColor();
+
+                        Console.Write(suffix);
+                        Console.WriteLine();
                     }
                 }
                 Console.ResetColor();
