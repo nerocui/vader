@@ -11,6 +11,13 @@ namespace Vader.CodeAnalysis.Syntax
         MinusToken,
         StarToken,
         SlashToken,
+        EqualsToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
+        EqualEqualToken,
+        BangEqualToken,
+        IdentifierToken,
         OpenParenthesisoken,
         CloseParenthesisToken,
 
@@ -19,17 +26,11 @@ namespace Vader.CodeAnalysis.Syntax
         ParenthesizedExpression,
         LiteralExpression,
         UnaryExpression,
-        IdentifierToken,
-        FalseKeyword,
-        TrueKeyword,
-        BangToken,
-        AmpersandToken,
-        AmpersandAmpersandToken,
-        PipePipeToken,
-        EqualEqualToken,
-        BangEqualToken,
         NameExpression,
         AssignmentExpression,
-        EqualsToken
+
+        //Literals
+        FalseKeyword,
+        TrueKeyword,
     }
 }
