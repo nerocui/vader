@@ -129,7 +129,6 @@ namespace Vader.CodeAnalysis.Syntax
                     return new LiteralExpressionSyntax(numberToken);
                 }
             }
-            
         }
     }
 }
