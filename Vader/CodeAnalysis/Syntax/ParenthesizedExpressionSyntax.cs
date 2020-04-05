@@ -16,12 +16,5 @@ namespace Vader.CodeAnalysis.Syntax
         public SyntaxToken CloseParenthesisToken { get; }
 
         public override SyntaxKind Kind => SyntaxKind.ParenthesizedExpression;
-
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            yield return OpenParenthesisoken;
-            yield return Expression;
-            yield return CloseParenthesisToken;
-        }
     }
 }
