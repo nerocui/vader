@@ -12,10 +12,5 @@ namespace Vader.CodeAnalysis.Syntax
         public SyntaxToken IdentitifierToken { get; }
 
         public override SyntaxKind Kind => SyntaxKind.NameExpression;
-
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            yield return IdentitifierToken;
-        }
     }
 }

@@ -8,6 +8,23 @@ namespace Vader.Tests.CodeAnalysis.Syntax
 {
     public class LexerTests
     {
+        [Fact]
+        public void Lexer_Tests_AllTokens()
+        {
+            var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
+                                .Cast<SyntaxKind>()
+                                .Where(k => k.ToString().EndsWith("Keyword") ||
+                                            k.ToString().EndsWith("Token"));
+            var testedTokenKinds = GetTokens().Concat(GetSeparators()).Select(t => t.kind);
+
+            var untextedTokenKinds = new SortedSet<SyntaxKind>(tokenKinds);
+            untextedTokenKinds.Remove(SyntaxKind.BadToken);
+            untextedTokenKinds.Remove(SyntaxKind.EndOfFileToken);
+            untextedTokenKinds.ExceptWith(testedTokenKinds);
+
+            Assert.Empty(untextedTokenKinds);
+        }
+
         [Theory]
         [MemberData(nameof(GetTokensData))]
         public void Lexer_Lexes_Token(SyntaxKind kind, string text)
@@ -69,28 +86,19 @@ namespace Vader.Tests.CodeAnalysis.Syntax
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetTokens()
         {
-            return new[]
+            var fixedTokens = Enum.GetValues(typeof(SyntaxKind))
+                                .Cast<SyntaxKind>()
+                                .Select(k => (k, text: SyntaxFacts.GetText(k)))
+                                .Where(t => t.text != null);
+            var dynamicTokens =  new[]
             {
-                (SyntaxKind.PlusToken, "+"),
-                (SyntaxKind.MinusToken, "-"),
-                (SyntaxKind.StarToken, "*"),
-                (SyntaxKind.SlashToken, "/"),
-                (SyntaxKind.EqualsToken, "="),
-                (SyntaxKind.BangToken, "!"),
-                (SyntaxKind.AmpersandAmpersandToken, "&&"),
-                (SyntaxKind.PipePipeToken, "||"),
-                (SyntaxKind.EqualEqualToken, "=="),
-                (SyntaxKind.BangEqualToken, "!="),
-                (SyntaxKind.OpenParenthesisoken, "("),
-                (SyntaxKind.CloseParenthesisToken, ")"),
-                (SyntaxKind.FalseKeyword, "false"),
-                (SyntaxKind.TrueKeyword, "true"),
-
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
                 (SyntaxKind.NumberToken, "1"),
                 (SyntaxKind.NumberToken, "123"),
             };
+
+            return fixedTokens.Concat(dynamicTokens);
         }
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetSeparators()
