@@ -39,7 +39,7 @@ namespace Vader
                 if (showTree)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    PrettyPrint(syntaxTree.Root);
+                    syntaxTree.Root.WriteTo(Console.Out);
                     Console.ResetColor();
                 }
 
@@ -73,27 +73,6 @@ namespace Vader
                 }
                 Console.ResetColor();
             }
-        }
-
-        static void PrettyPrint(SyntaxNode node, string indent = "", bool isLast = true)
-        {
-            // ├─
-            // └─
-            // │
-            var marker = isLast ? "└─" : "├─";
-            Console.Write(indent);
-            Console.Write(marker);
-            Console.Write(node.Kind);
-
-            if (node is SyntaxToken t && t.Value != null)
-            {
-                Console.Write(" ");
-                Console.Write(t.Value);
-            }
-            Console.WriteLine();
-            indent += isLast ? "   " : "│  ";
-            foreach (var child in node.GetChildren())
-                PrettyPrint(child, indent, child == node.GetChildren().LastOrDefault());
         }
     }
 }
