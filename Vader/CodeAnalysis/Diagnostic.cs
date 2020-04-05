@@ -1,3 +1,5 @@
+using Vader.CodeAnalysis.Text;
+
 namespace Vader.CodeAnalysis
 {
     public sealed class Diagnostic

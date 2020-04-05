@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Vader.CodeAnalysis.Text;
 
 namespace Vader.CodeAnalysis.Syntax
 {
