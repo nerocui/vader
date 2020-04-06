@@ -50,10 +50,15 @@ namespace Vader
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    var text = syntaxTree.Text;
                     foreach (var diagnostic in diagnostics)
                     {
+                        var lineIndex = text.GetLineIndex(diagnostic.Span.Start);
+                        var lineNumber = lineIndex + 1;
+                        var character = diagnostic.Span.Start - text.Lines[lineIndex].Start + 1;
+
                         Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write($"(line {lineNumber}, column {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 

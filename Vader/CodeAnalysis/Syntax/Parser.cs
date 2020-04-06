@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Vader.CodeAnalysis.Text;
 
 namespace Vader.CodeAnalysis.Syntax
 {
@@ -8,7 +9,9 @@ namespace Vader.CodeAnalysis.Syntax
         private readonly ImmutableArray<SyntaxToken> _tokens;
         private int _position;
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
-        public Parser(string text)
+        private readonly SourceText _text;
+
+        public Parser(SourceText text)
         {
             var tokens = new List<SyntaxToken>();
             var lexer = new Lexer(text);
@@ -23,6 +26,7 @@ namespace Vader.CodeAnalysis.Syntax
             } while (token.Kind != SyntaxKind.EndOfFileToken);
             _tokens = tokens.ToImmutableArray();
             _diagnostics.AddRange(lexer.Diagnostics);
+            _text = text;
         }
         public DiagnosticBag Diagnostics => _diagnostics;
 
@@ -53,7 +57,7 @@ namespace Vader.CodeAnalysis.Syntax
         {
             var expression = ParseExpression();
             var endOfFile = MatchToken(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(_diagnostics.ToImmutableArray(), expression, endOfFile);
+            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expression, endOfFile);
         }
 
         private ExpressionSyntax ParseExpression()
