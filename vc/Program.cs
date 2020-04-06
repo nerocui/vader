@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Vader.CodeAnalysis;
 using Vader.CodeAnalysis.Binding;
 using Vader.CodeAnalysis.Syntax;
+using Vader.CodeAnalysis.Text;
 
 namespace Vader
 {
@@ -13,27 +15,45 @@ namespace Vader
         {
             var showTree = false;
             var variables = new Dictionary<VariableSymbol,object>();
+            var textBuilder = new StringBuilder();
+
             while (true)
             {
-                Console.Write(">");
-                var line = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(line))
-                    return;
+                if (textBuilder.Length == 0)
+                    Console.Write(">");
+                else
+                    Console.Write("| ");
 
-                if (line == "#showTree")
+                var input = Console.ReadLine();
+                var isBlank = string.IsNullOrWhiteSpace(input);
+
+                if (textBuilder.Length == 0)
                 {
-                    showTree = !showTree;
-                    Console.WriteLine(showTree ? "Showing parsed syntax tree" : "Not showing parsed syntax tree");
-                    continue;
+                    if (isBlank)
+                    {
+                        break;
+                    }
+                    else if (input == "#showTree")
+                    {
+                        showTree = !showTree;
+                        Console.WriteLine(showTree ? "Showing parsed syntax tree" : "Not showing parsed syntax tree");
+                        continue;
+                    }
+                    else if (input == "#clear")
+                    {
+                        Console.Clear();
+                        continue;
+                    }
                 }
 
-                if (line == "#clear")
-                {
-                    Console.Clear();
-                    continue;
-                }
+                textBuilder.AppendLine(input);
+                var text = textBuilder.ToString();
 
-                var syntaxTree = SyntaxTree.Parse(line);
+                var syntaxTree = SyntaxTree.Parse(text);
+
+                if (!isBlank && syntaxTree.Diagnostics.Any())
+                    continue;
+
                 var compilation = new Compilation(syntaxTree);
                 var result = compilation.Evaluate(variables);
                 if (showTree)
@@ -50,16 +70,24 @@ namespace Vader
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
                     foreach (var diagnostic in diagnostics)
                     {
+                        var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
+                        var lineNumber = lineIndex + 1;
+                        var line = syntaxTree.Text.Lines[lineIndex];
+                        var character = diagnostic.Span.Start - line.Start + 1;
+
                         Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write($"(line {lineNumber}, column {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 
-                        var prefix = line.Substring(0, diagnostic.Span.Start);
-                        var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
-                        var suffix = line.Substring(diagnostic.Span.End);
+                        var prefixSpan = TextSpan.FromBounds(line.Start, diagnostic.Span.Start);
+                        var suffixSpan = TextSpan.FromBounds(diagnostic.Span.End, line.End);
+
+                        var prefix = syntaxTree.Text.ToString(prefixSpan);
+                        var error = syntaxTree.Text.ToString(diagnostic.Span);
+                        var suffix = syntaxTree.Text.ToString(suffixSpan);
                         
                         Console.Write("    ");
                         Console.Write(prefix);
@@ -73,6 +101,7 @@ namespace Vader
                 }
                 Console.ResetColor();
             }
+            textBuilder.Clear();
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Vader.CodeAnalysis
+namespace Vader.CodeAnalysis.Text
 {
     public struct TextSpan
     {

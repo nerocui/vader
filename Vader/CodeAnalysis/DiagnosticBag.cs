@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Vader.CodeAnalysis.Syntax;
+using Vader.CodeAnalysis.Text;
 
 namespace Vader.CodeAnalysis
 {
