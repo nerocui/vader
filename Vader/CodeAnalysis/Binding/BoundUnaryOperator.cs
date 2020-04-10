@@ -15,10 +15,10 @@ namespace Vader.CodeAnalysis.Binding
         }
         private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
         {
-            this.ResultType = resultType;
-            this.OperandType = operandType;
-            this.Kind = kind;
-            this.SyntaxKind = syntaxKind;
+            ResultType = resultType;
+            OperandType = operandType;
+            Kind = kind;
+            SyntaxKind = syntaxKind;
         }
         private static BoundUnaryOperator[] _operators =
         {

@@ -20,11 +20,11 @@ namespace Vader.CodeAnalysis.Binding
         }
         private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
         {
-            this.RightType = rightType;
-            this.LeftType = leftType;
-            this.ResultType = resultType;
-            this.Kind = kind;
-            this.SyntaxKind = syntaxKind;
+            RightType = rightType;
+            LeftType = leftType;
+            ResultType = resultType;
+            Kind = kind;
+            SyntaxKind = syntaxKind;
         }
         private static BoundBinaryOperator[] _operators =
         {
