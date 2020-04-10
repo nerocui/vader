@@ -12,7 +12,7 @@ namespace Vader.CodeAnalysis.Binding
         public BoundAssignmentExpression(VariableSymbol variable, BoundExpression expression)
         {
             Variable = variable;
-            this.Expression = expression;
+            Expression = expression;
         }
     }
 }
