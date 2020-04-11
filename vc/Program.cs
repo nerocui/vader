@@ -19,10 +19,12 @@ namespace Vader
 
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 if (textBuilder.Length == 0)
                     Console.Write(">");
                 else
                     Console.Write("| ");
+                Console.ResetColor();
 
                 var input = Console.ReadLine();
                 var isBlank = string.IsNullOrWhiteSpace(input);
@@ -66,7 +68,9 @@ namespace Vader
                 var diagnostics = result.Diagnostics;
                 if (!diagnostics.Any())
                 {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine($"Result is: {result.Value}");
+                    Console.ResetColor();
                 }
                 else
                 {
@@ -100,8 +104,8 @@ namespace Vader
                     }
                 }
                 Console.ResetColor();
+                textBuilder.Clear();
             }
-            textBuilder.Clear();
         }
     }
 }
