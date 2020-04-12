@@ -34,6 +34,8 @@ namespace Vader.CodeAnalysis.Syntax
         //Literals
         FalseKeyword,
         TrueKeyword,
+        LetKeyword,
+        VarKeyword,
 
         //Nodes
         CompilationUnit,
@@ -41,5 +43,6 @@ namespace Vader.CodeAnalysis.Syntax
         //Statements
         BlockStatement,
         ExpressionStatement,
+        VariableDeclaration,
     }
 }

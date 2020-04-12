@@ -8,9 +8,11 @@ namespace Vader.CodeAnalysis.Binding
         BinaryExpression,
         VariableExpression,
         AssignmentExpression,
+        VariableDeclaration,
 
         //Statements
         BlockStatement,
-        ExpressionStatement
+        ExpressionStatement,
+        
     }
 }
