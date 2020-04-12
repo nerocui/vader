@@ -32,5 +32,9 @@ namespace Vader.CodeAnalysis.Syntax
         //Literals
         FalseKeyword,
         TrueKeyword,
+
+        //Nodes
+        CompilationUnit,
+
     }
 }

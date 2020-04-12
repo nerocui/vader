@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Vader.CodeAnalysis.Syntax;
 
@@ -8,14 +9,52 @@ namespace Vader.CodeAnalysis.Binding
     internal sealed class Binder
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
-        private readonly Dictionary<VariableSymbol, object> _variables;
-
+        private BoundScope _scope;
         public DiagnosticBag Diagnostics => _diagnostics;
-        public Binder(Dictionary<VariableSymbol, object> variables)
+        public Binder(BoundScope parent)
         {
-            _variables = variables;
+            _scope = new BoundScope(parent);
+        }
+        public static BoundGlobalScope BindGlobalScope(BoundGlobalScope previous, CompilationUnitSyntax syntax)
+        {
+            var parentScope = CreateParentScopes(previous);
+            var binder = new Binder(parentScope);
+            var expression = binder.BindExpression(syntax.Expression);
+            var variables = binder._scope.GetDeclaredVariables();
+            var diagnostics = binder.Diagnostics.ToImmutableArray();
+
+            //Since in CLI, the variables from different lines are chaining (nested)
+            //we need to chain the diagnostics too.
+            //otherwise, statements like a=b will give error, but
+            //when we reference a again, it will not have the same error
+            if (previous != null)
+                diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
+
+            return new BoundGlobalScope(previous, diagnostics, variables, expression);
         }
 
+        private static BoundScope CreateParentScopes(BoundGlobalScope previous)
+        {
+            // submission 3 => submission 2 => submission 1
+            var stack = new Stack<BoundGlobalScope>();
+            while (previous != null)
+            {
+                stack.Push(previous);
+                previous = previous.Previous;
+            }
+            // submission 1 => submission 2 => submission 3
+            BoundScope parent = null;
+            while (stack.Count > 0)
+            {
+                previous = stack.Pop();
+                var scope = new BoundScope(parent);
+                foreach (var v in previous.Variables)
+                    scope.TryDeclare(v);
+                parent = scope;
+            }
+
+            return parent;
+        }
         public BoundExpression BindExpression(ExpressionSyntax syntax)
         {
             switch (syntax.Kind)
@@ -40,8 +79,7 @@ namespace Vader.CodeAnalysis.Binding
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             var name = syntax.IdentitifierToken.Text;
-            var variable = _variables.Keys.FirstOrDefault(v => v.Name == name);
-            if (variable == null)
+            if (!_scope.TryLookup(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentitifierToken.Span, name);
                 return new BoundLiteralExpression(0);
@@ -53,12 +91,17 @@ namespace Vader.CodeAnalysis.Binding
         {
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
-            var existingVariable = _variables.Keys.FirstOrDefault(v => v.Name == name);
-            if (existingVariable != null)
-                _variables.Remove(existingVariable);
-            
-            var variable = new VariableSymbol(name, boundExpression.Type);
-            _variables[variable] = null;
+            if (!_scope.TryLookup(name, out var variable))
+            {
+                variable = new VariableSymbol(name, boundExpression.Type);
+                _scope.TryDeclare(variable);
+            }
+
+            if (boundExpression.Type != variable.Type)
+            {
+                _diagnostics.ReportCannotConvert(syntax.Expression.Span, boundExpression.Type, variable.Type);
+                return boundExpression;
+            }
             return new BoundAssignmentExpression(variable, boundExpression);
         }
 

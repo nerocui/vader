@@ -61,5 +61,17 @@ namespace Vader.CodeAnalysis
             var message = $"Error: Variable {name} doesn't exist.";
             Report(span, message);
         }
+
+        internal void ReportVariableAlreadyDeclared(TextSpan span, string name)
+        {
+            var message = $"Error: Variable {name} has already been declared.";
+            Report(span, message);
+        }
+
+        internal void ReportCannotConvert(TextSpan span, Type fromType, Type toType)
+        {
+            var message = $"Error: Cannot convert type '{fromType}' to '{toType}'";
+            Report(span, message);
+        }
     }
 }
