@@ -33,7 +33,7 @@ namespace Vader.Tests.CodeAnalysis
         [InlineData("false", false)]
         [InlineData("!true", false)]
         [InlineData("!false", true)]
-        [InlineData("(a = 10) * 8", 80)]
+        [InlineData("{ var a = 0 (a = 10) * 8 }", 80)]
         public void SyntaxFact_GetText_RoundTrips(string text, object expectedValue)
         {
             var syntaxTree = SyntaxTree.Parse(text);
