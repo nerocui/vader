@@ -16,13 +16,16 @@ namespace Vader
             var showTree = false;
             var variables = new Dictionary<VariableSymbol,object>();
             var textBuilder = new StringBuilder();
+            Compilation previous = null;
 
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 if (textBuilder.Length == 0)
                     Console.Write(">");
                 else
                     Console.Write("| ");
+                Console.ResetColor();
 
                 var input = Console.ReadLine();
                 var isBlank = string.IsNullOrWhiteSpace(input);
@@ -44,6 +47,11 @@ namespace Vader
                         Console.Clear();
                         continue;
                     }
+                    else if (input == "#reset")
+                    {
+                        previous = null;
+                        continue;
+                    }
                 }
 
                 textBuilder.AppendLine(input);
@@ -54,7 +62,9 @@ namespace Vader
                 if (!isBlank && syntaxTree.Diagnostics.Any())
                     continue;
 
-                var compilation = new Compilation(syntaxTree);
+                var compilation = previous == null 
+                                    ? new Compilation(syntaxTree)
+                                    : previous.ContinueWith(syntaxTree);
                 var result = compilation.Evaluate(variables);
                 if (showTree)
                 {
@@ -63,14 +73,17 @@ namespace Vader
                     Console.ResetColor();
                 }
 
-                var diagnostics = result.Diagnostics;
-                if (!diagnostics.Any())
+                if (!result.Diagnostics.Any())
                 {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine($"Result is: {result.Value}");
+                    Console.ResetColor();
+
+                    previous = compilation;
                 }
                 else
                 {
-                    foreach (var diagnostic in diagnostics)
+                    foreach (var diagnostic in result.Diagnostics)
                     {
                         var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
                         var lineNumber = lineIndex + 1;
@@ -100,8 +113,8 @@ namespace Vader
                     }
                 }
                 Console.ResetColor();
+                textBuilder.Clear();
             }
-            textBuilder.Clear();
         }
     }
 }
