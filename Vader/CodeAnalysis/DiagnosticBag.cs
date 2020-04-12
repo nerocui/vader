@@ -73,5 +73,11 @@ namespace Vader.CodeAnalysis
             var message = $"Error: Cannot convert type '{fromType}' to '{toType}'";
             Report(span, message);
         }
+
+        internal void ReportCannotAssign(TextSpan span, string name)
+        {
+            var message = $"Error: Variable '{name}' is read-only and cannot be assigned to.";
+            Report(span, message);
+        }
     }
 }

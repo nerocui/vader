@@ -7,13 +7,13 @@ namespace Vader.CodeAnalysis.Binding
         public BoundGlobalScope Previous { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
         public ImmutableArray<VariableSymbol> Variables { get; }
-        public BoundExpression Expression { get; }
-        public BoundGlobalScope(BoundGlobalScope previous, ImmutableArray<Diagnostic> diagnostics, ImmutableArray<VariableSymbol> variables, BoundExpression expression)
+        public BoundStatement Statement { get; }
+        public BoundGlobalScope(BoundGlobalScope previous, ImmutableArray<Diagnostic> diagnostics, ImmutableArray<VariableSymbol> variables, BoundStatement statement)
         {
-            this.Expression = expression;
-            this.Variables = variables;
-            this.Diagnostics = diagnostics;
-            this.Previous = previous;
+            Statement = statement;
+            Variables = variables;
+            Diagnostics = diagnostics;
+            Previous = previous;
 
         }
     }
