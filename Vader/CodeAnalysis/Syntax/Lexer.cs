@@ -61,11 +61,19 @@ namespace Vader.CodeAnalysis.Syntax
                     _position++;
                     break;
                 case '(':
-                    _kind = SyntaxKind.OpenParenthesisoken;
+                    _kind = SyntaxKind.OpenParenthesisToken;
                     _position++;
                     break;
                 case ')':
                     _kind = SyntaxKind.CloseParenthesisToken;
+                    _position++;
+                    break;
+                case '{':
+                    _kind = SyntaxKind.OpenBraceToken;
+                    _position++;
+                    break;
+                case '}':
+                    _kind = SyntaxKind.CloseBraceToken;
                     _position++;
                     break;
                 case '!':

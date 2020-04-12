@@ -56,9 +56,35 @@ namespace Vader.CodeAnalysis.Syntax
 
         public CompilationUnitSyntax ParseCompilationUnit()
         {
+            var statement = ParseStatement();
+            var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
+            return new CompilationUnitSyntax(statement, endOfFileToken);
+        }
+
+        private StatementSyntax ParseStatement()
+        {
+            if (Current.Kind == SyntaxKind.OpenBraceToken)
+                return ParseBlockStatement();
+            return ParseExpressionStatement();
+        }
+
+        private ExpressionStatementSyntax ParseExpressionStatement()
+        {
             var expression = ParseExpression();
-            var endOfFile = MatchToken(SyntaxKind.EndOfFileToken);
-            return new CompilationUnitSyntax(expression, endOfFile);
+            return new ExpressionStatementSyntax(expression);
+        }
+
+        private BlockStatementSyntax ParseBlockStatement()
+        {
+            var statements = ImmutableArray.CreateBuilder<StatementSyntax>();
+            var openBraceToken = MatchToken(SyntaxKind.OpenBraceToken);
+            while (Current.Kind != SyntaxKind.EndOfFileToken && Current.Kind != SyntaxKind.CloseBraceToken)
+            {
+                var statement = ParseStatement();
+                statements.Add(statement);
+            }
+            var closeBraceToken = MatchToken(SyntaxKind.CloseBraceToken);
+            return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);
         }
 
         private ExpressionSyntax ParseExpression()
@@ -109,7 +135,7 @@ namespace Vader.CodeAnalysis.Syntax
         {
             switch (Current.Kind)
             {
-                case SyntaxKind.OpenParenthesisoken:
+                case SyntaxKind.OpenParenthesisToken:
                     return ParseParenthesizedToken();
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
@@ -130,7 +156,7 @@ namespace Vader.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseParenthesizedToken()
         {
-            var left = MatchToken(SyntaxKind.OpenParenthesisoken);
+            var left = MatchToken(SyntaxKind.OpenParenthesisToken);
             var expression = ParseExpression();
             var right = MatchToken(SyntaxKind.CloseParenthesisToken);
             return new ParenthesizedExpressionSyntax(left, expression, right);

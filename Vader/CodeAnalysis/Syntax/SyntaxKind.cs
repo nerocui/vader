@@ -18,8 +18,10 @@ namespace Vader.CodeAnalysis.Syntax
         EqualEqualToken,
         BangEqualToken,
         IdentifierToken,
-        OpenParenthesisoken,
+        OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
 
         //expressions
         BinaryExpression,
@@ -36,5 +38,8 @@ namespace Vader.CodeAnalysis.Syntax
         //Nodes
         CompilationUnit,
 
+        //Statements
+        BlockStatement,
+        ExpressionStatement,
     }
 }

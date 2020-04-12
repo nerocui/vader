@@ -96,10 +96,14 @@ namespace Vader.CodeAnalysis.Syntax
                     return "==";
                 case SyntaxKind.BangEqualToken:
                     return "!=";
-                case SyntaxKind.OpenParenthesisoken:
+                case SyntaxKind.OpenParenthesisToken:
                     return "(";
                 case SyntaxKind.CloseParenthesisToken:
                     return ")";
+                case SyntaxKind.OpenBraceToken:
+                    return "{";
+                case SyntaxKind.CloseBraceToken:
+                    return "}";
                 case SyntaxKind.FalseKeyword:
                     return "false";
                 case SyntaxKind.TrueKeyword:

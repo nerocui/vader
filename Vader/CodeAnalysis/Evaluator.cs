@@ -6,10 +6,10 @@ namespace Vader.CodeAnalysis
 {
     internal sealed partial class Evaluator
     {
-        private readonly BoundExpression _root;
+        private readonly BoundStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
-
-        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
+        private object _lastValue;
+        public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
         {
             _root = root;
             _variables = variables;
@@ -17,7 +17,34 @@ namespace Vader.CodeAnalysis
 
         public object Evaluate()
         {
-            return EvaluateExpression(_root);
+            EvaluateStatement(_root);
+            return _lastValue;
+        }
+
+        private void EvaluateStatement(BoundStatement statement)
+        {
+            switch (statement.Kind)
+            {
+                case BoundNodeKind.BlockStatement:
+                    EvaluateBlockStatement((BoundBlockStatement)statement);
+                    break;
+                case BoundNodeKind.ExpressionStatement:
+                    EvaluateExpressionStatement((BoundExpressionStatement)statement);
+                    break;
+                default:
+                    throw new Exception($"Error: Unexpected statement {statement.Kind}");
+            }
+        }
+
+        private void EvaluateExpressionStatement(BoundExpressionStatement statement)
+        {
+            _lastValue = EvaluateExpression(statement.Expression);
+        }
+
+        private void EvaluateBlockStatement(BoundBlockStatement boundBlockStatement)
+        {
+            foreach (var statement in boundBlockStatement.Statements)
+                EvaluateStatement(statement);
         }
 
         private object EvaluateExpression(BoundExpression node)
