@@ -135,6 +135,14 @@ namespace Vader.Tests.CodeAnalysis.Syntax
                 return true;
             if (t1Kind == SyntaxKind.EqualsToken && t2Kind == SyntaxKind.EqualEqualToken)
                 return true;
+            if (t1Kind == SyntaxKind.LessToken && t2Kind == SyntaxKind.EqualsToken)
+                return true;
+            if (t1Kind == SyntaxKind.LessToken && t2Kind == SyntaxKind.EqualEqualToken)
+                return true;
+            if (t1Kind == SyntaxKind.GreaterToken && t2Kind == SyntaxKind.EqualsToken)
+                return true;
+            if (t1Kind == SyntaxKind.GreaterToken && t2Kind == SyntaxKind.EqualEqualToken)
+                return true;
             return false;
         }
 

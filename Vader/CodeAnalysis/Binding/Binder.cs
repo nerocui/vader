@@ -63,11 +63,30 @@ namespace Vader.CodeAnalysis.Binding
                     return BindBlockStatement((BlockStatementSyntax)syntax);
                 case SyntaxKind.VariableDeclaration:
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
+                case SyntaxKind.IfStatement:
+                    return BindIfStatement((IfStatementSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 default:
                     throw new Exception($"Error: Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClauseSyntax == null ? null : BindStatement(syntax.ElseClauseSyntax.ElseStatement);
+
+            return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type type)
+        {
+            var result = BindExpression(syntax);
+            if (result.Type != type)
+                _diagnostics.ReportCannotConvert(syntax.Span, result.Type, type);
+            return result;
         }
 
         private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
