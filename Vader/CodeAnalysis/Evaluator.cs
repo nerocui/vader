@@ -34,12 +34,21 @@ namespace Vader.CodeAnalysis
                 case BoundNodeKind.IfStatement:
                     EvaluateIfStatement((BoundIfStatement)statement);
                     break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluateWhileStatement((BoundWhileStatement)statement);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)statement);
                     break;
                 default:
                     throw new Exception($"Error: Unexpected statement {statement.Kind}");
             }
+        }
+
+        private void EvaluateWhileStatement(BoundWhileStatement statement)
+        {
+            while ((bool)EvaluateExpression(statement.Condition))
+                EvaluateStatement(statement.Body);
         }
 
         private void EvaluateIfStatement(BoundIfStatement statement)

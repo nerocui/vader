@@ -14,5 +14,6 @@ namespace Vader.CodeAnalysis.Binding
         BlockStatement,
         ExpressionStatement,
         IfStatement,
+        WhileStatement,
     }
 }
