@@ -31,12 +31,48 @@ namespace Vader.CodeAnalysis
                 case BoundNodeKind.VariableDeclaration:
                     EvaluateVariableDeclaration((BoundVariableDeclaration)statement);
                     break;
+                case BoundNodeKind.IfStatement:
+                    EvaluateIfStatement((BoundIfStatement)statement);
+                    break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluateWhileStatement((BoundWhileStatement)statement);
+                    break;
+                case BoundNodeKind.ForStatement:
+                    EvaluateForStatement((BoundForStatement)statement);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)statement);
                     break;
                 default:
                     throw new Exception($"Error: Unexpected statement {statement.Kind}");
             }
+        }
+
+        private void EvaluateForStatement(BoundForStatement statement)
+        {
+            var lowerBound = (int)EvaluateExpression(statement.LowerBound);
+            var upperBound = (int)EvaluateExpression(statement.UpperBound);
+
+            for (var i = lowerBound; i <= upperBound; i++)
+            {
+                _variables[statement.Variable] = i;
+                EvaluateStatement(statement.Body);
+            }
+        }
+
+        private void EvaluateWhileStatement(BoundWhileStatement statement)
+        {
+            while ((bool)EvaluateExpression(statement.Condition))
+                EvaluateStatement(statement.Body);
+        }
+
+        private void EvaluateIfStatement(BoundIfStatement statement)
+        {
+            var condition = (bool)EvaluateExpression(statement.Condition);
+            if (condition)
+                EvaluateStatement(statement.ThenStatement);
+            else if (statement.ElseStatement != null)
+                EvaluateStatement(statement.ElseStatement);
         }
 
         private void EvaluateVariableDeclaration(BoundVariableDeclaration statement)
@@ -99,6 +135,14 @@ namespace Vader.CodeAnalysis
                     return Equals(left, right);
                 case BoundBinaryOperatorKind.NotEquals:
                     return !Equals(left, right);
+                case BoundBinaryOperatorKind.Less:
+                    return (int)left < (int)right;
+                case BoundBinaryOperatorKind.LessOrEquals:
+                    return (int)left <= (int)right;
+                case BoundBinaryOperatorKind.Greater:
+                    return (int)left > (int)right;
+                case BoundBinaryOperatorKind.GreaterOrEquals:
+                    return (int)left >= (int)right;
                 default:
                     throw new Exception($"Error: Unexpected binary operator {b.Op}");
             }

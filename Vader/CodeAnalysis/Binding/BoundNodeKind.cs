@@ -13,6 +13,8 @@ namespace Vader.CodeAnalysis.Binding
         //Statements
         BlockStatement,
         ExpressionStatement,
-        
+        IfStatement,
+        WhileStatement,
+        ForStatement,
     }
 }

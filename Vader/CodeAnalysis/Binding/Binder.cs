@@ -63,11 +63,56 @@ namespace Vader.CodeAnalysis.Binding
                     return BindBlockStatement((BlockStatementSyntax)syntax);
                 case SyntaxKind.VariableDeclaration:
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
+                case SyntaxKind.IfStatement:
+                    return BindIfStatement((IfStatementSyntax)syntax);
+                case SyntaxKind.WhileStatement:
+                    return BindWhileStatement((WhileStatementSyntax)syntax);
+                case SyntaxKind.ForStatement:
+                    return BindForStatement((ForStatementSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 default:
                     throw new Exception($"Error: Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundStatement BindForStatement(ForStatementSyntax syntax)
+        {
+            var lowerBound = BindExpression(syntax.LowerBound, typeof(int));
+            var upperBound = BindExpression(syntax.UpperBound, typeof(int));
+            _scope = new BoundScope(_scope);
+            var name = syntax.Identifier.Text;
+            var variable = new VariableSymbol(name, true, typeof(int));
+            
+            if (!_scope.TryDeclare(variable))
+                _diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, name);
+            var body = BindStatement(syntax.Body);
+            _scope = _scope.Parent;
+            return new BoundForStatement(variable, lowerBound, upperBound, body);
+        }
+
+        private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var body = BindStatement(syntax.Body);
+            return new BoundWhileStatement(condition, body);
+        }
+
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClauseSyntax == null ? null : BindStatement(syntax.ElseClauseSyntax.ElseStatement);
+
+            return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type type)
+        {
+            var result = BindExpression(syntax);
+            if (result.Type != type)
+                _diagnostics.ReportCannotConvert(syntax.Span, result.Type, type);
+            return result;
         }
 
         private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
@@ -125,6 +170,11 @@ namespace Vader.CodeAnalysis.Binding
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             var name = syntax.IdentifierToken.Text;
+            if (string.IsNullOrEmpty(name))
+            {
+                //already reported, this is null because name was synthesized
+                return new BoundLiteralExpression(0);
+            }
             if (!_scope.TryLookup(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
