@@ -40,7 +40,7 @@ namespace Vader.CodeAnalysis
 
         public void ReportUnexpectedToken(TextSpan span, SyntaxKind actualKind, SyntaxKind expectedKind)
         {
-            var message = $"Error: Unexpected token <{actualKind}>, expected <{expectedKind}>";
+            var message = $"Error: Unexpected token <{actualKind}>, expected <{expectedKind}>.";
             Report(span, message);
         }
 

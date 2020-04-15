@@ -141,8 +141,17 @@ namespace Vader.CodeAnalysis.Syntax
             var openBraceToken = MatchToken(SyntaxKind.OpenBraceToken);
             while (Current.Kind != SyntaxKind.EndOfFileToken && Current.Kind != SyntaxKind.CloseBraceToken)
             {
+                var startToken = Current;
                 var statement = ParseStatement();
                 statements.Add(statement);
+
+                //if ParseStatement() did not comsume any token,
+                //we skip and move on to avoid infinite loop.
+                //no need to report.
+                if (Current == startToken)
+                {
+                    NextToken();
+                }
             }
             var closeBraceToken = MatchToken(SyntaxKind.CloseBraceToken);
             return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);

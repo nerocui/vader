@@ -59,6 +59,20 @@ namespace Vader.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_BlockStatement_NoInfiniteLoop()
+        {
+            var text = @"
+            {
+            [)][]
+            ";
+            var diagnostics = @"
+                Error: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+                Error: Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+        [Fact]
         public void Evaluator_VariableDeclaration_Reports_Redeclaration()
         {
             var text = @"
@@ -79,7 +93,7 @@ namespace Vader.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_Name_Reports_Undefined()
+        public void Evaluator_NameExpression_Reports_Undefined()
         {
             var text = @"[x] * 10";
             var diagnostics = @"
@@ -232,7 +246,7 @@ namespace Vader.Tests.CodeAnalysis
             var expectedDiagnostics = AnnotatedText.UnindentLines(diagnosticsText);
 
             if (annotatedText.Spans.Length != expectedDiagnostics.Length)
-                throw new Exception("Error: Must mark as many spans as there are expected diagnostics");
+                throw new Exception($"Error: Must mark as many spans as there are expected diagnostics, got {annotatedText.Spans.Length}, expected {expectedDiagnostics.Length}");
             
             Assert.Equal(expectedDiagnostics.Length, result.Diagnostics.Length);
 
