@@ -44,6 +44,8 @@ namespace Vader.CodeAnalysis.Syntax
         IfKeyword,
         ElseKeyword,
         WhileKeyword,
+        ForKeyword,
+        ToKeyword,
 
         //Nodes
         CompilationUnit,
@@ -55,5 +57,6 @@ namespace Vader.CodeAnalysis.Syntax
         VariableDeclaration,
         IfStatement,
         WhileStatement,
+        ForStatement,
     }
 }

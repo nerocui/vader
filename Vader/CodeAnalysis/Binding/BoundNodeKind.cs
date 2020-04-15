@@ -15,5 +15,6 @@ namespace Vader.CodeAnalysis.Binding
         ExpressionStatement,
         IfStatement,
         WhileStatement,
+        ForStatement,
     }
 }
