@@ -24,7 +24,7 @@ namespace Vader
                 if (textBuilder.Length == 0)
                     Console.Write(">");
                 else
-                    Console.Write("| ");
+                    Console.Write("· ");
                 Console.ResetColor();
 
                 var input = Console.ReadLine();
