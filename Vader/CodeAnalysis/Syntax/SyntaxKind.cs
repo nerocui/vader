@@ -13,8 +13,10 @@ namespace Vader.CodeAnalysis.Syntax
         SlashToken,
         EqualsToken,
         BangToken,
+        AmpersandToken,
         AmpersandAmpersandToken,
         PipePipeToken,
+        PipeToken,
         EqualEqualToken,
         BangEqualToken,
         LessToken,
@@ -26,6 +28,8 @@ namespace Vader.CodeAnalysis.Syntax
         CloseParenthesisToken,
         OpenBraceToken,
         CloseBraceToken,
+        TildeToken,
+        CaretToken,
 
 
         //expressions
