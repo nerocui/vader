@@ -76,10 +76,20 @@ namespace Vader.CodeAnalysis.Syntax
                     _kind = SyntaxKind.CloseBraceToken;
                     _position++;
                     break;
+                case '~':
+                    _kind = SyntaxKind.TildeToken;
+                    _position++;
+                    break;
+                case '^':
+                    _kind = SyntaxKind.CaretToken;
+                    _position++;
+                    break;
                 case '!':
                     _position++;
                     if (Current != '=')
+                    {
                         _kind = SyntaxKind.BangToken;
+                    }
                     else
                     {
                         _kind = SyntaxKind.BangEqualToken;
@@ -87,24 +97,35 @@ namespace Vader.CodeAnalysis.Syntax
                     }
                     break;
                 case '&':
-                    if (LookHead == '&')
+                    _position++;
+                    if (Current != '&')
                     {
-                        _position += 2;
+                        _kind = SyntaxKind.AmpersandToken;
+                    }
+                    else
+                    {
                         _kind = SyntaxKind.AmpersandAmpersandToken;
+                        _position++;
                     }
                     break;
                 case '|':
-                    if (LookHead == '|')
+                    _position++;
+                    if (Current != '|')
                     {
-                        _position += 2;
+                        _kind = SyntaxKind.PipeToken;
+                    }
+                    else
+                    {
                         _kind = SyntaxKind.PipePipeToken;
-                        break;
+                        _position++;
                     }
                     break;
                 case '=':
                     _position++;
                     if (Current != '=')
+                    {
                         _kind = SyntaxKind.EqualsToken;
+                    }
                     else
                     {
                         _kind = SyntaxKind.EqualEqualToken;
@@ -114,7 +135,9 @@ namespace Vader.CodeAnalysis.Syntax
                 case '<':
                     _position++;
                     if (Current != '=')
+                    {
                         _kind = SyntaxKind.LessToken;
+                    }
                     else
                     {
                         _kind = SyntaxKind.LessOrEqualsToken;
@@ -124,7 +147,9 @@ namespace Vader.CodeAnalysis.Syntax
                 case '>':
                     _position++;
                     if (Current != '=')
+                    {
                         _kind = SyntaxKind.GreaterToken;
+                    }
                     else
                     {
                         _kind = SyntaxKind.GreaterOrEqualsToken;

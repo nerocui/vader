@@ -12,6 +12,7 @@ namespace Vader.CodeAnalysis.Syntax
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
                 case SyntaxKind.BangToken:
+                case SyntaxKind.TildeToken:
                     return 6;
                 default:
                     return 0;
@@ -35,8 +36,11 @@ namespace Vader.CodeAnalysis.Syntax
                 case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
                 case SyntaxKind.AmpersandAmpersandToken:
+                case SyntaxKind.AmpersandToken:
                     return 2;
                 case SyntaxKind.PipePipeToken:
+                case SyntaxKind.PipeToken:
+                case SyntaxKind.CaretToken:
                     return 1;
                 default:
                     return 0;
@@ -106,8 +110,12 @@ namespace Vader.CodeAnalysis.Syntax
                     return "=";
                 case SyntaxKind.BangToken:
                     return "!";
+                case SyntaxKind.AmpersandToken:
+                    return "&";
                 case SyntaxKind.AmpersandAmpersandToken:
                     return "&&";
+                case SyntaxKind.PipeToken:
+                    return "|";
                 case SyntaxKind.PipePipeToken:
                     return "||";
                 case SyntaxKind.EqualEqualToken:
@@ -130,6 +138,10 @@ namespace Vader.CodeAnalysis.Syntax
                     return "{";
                 case SyntaxKind.CloseBraceToken:
                     return "}";
+                case SyntaxKind.TildeToken:
+                    return "~";
+                case SyntaxKind.CaretToken:
+                    return "^";
                 case SyntaxKind.FalseKeyword:
                     return "false";
                 case SyntaxKind.TrueKeyword:
