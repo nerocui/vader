@@ -14,6 +14,7 @@ namespace Vader
         static void Main()
         {
             var showTree = false;
+            var showProgram = false;
             var variables = new Dictionary<VariableSymbol,object>();
             var textBuilder = new StringBuilder();
             Compilation previous = null;
@@ -40,6 +41,12 @@ namespace Vader
                     {
                         showTree = !showTree;
                         Console.WriteLine(showTree ? "Showing parsed syntax tree" : "Not showing parsed syntax tree");
+                        continue;
+                    }
+                    else if (input == "#showProgram")
+                    {
+                        showProgram = !showProgram;
+                        Console.WriteLine(showProgram ? "Showing parsed bound tree" : "Not showing parsed bound tree");
                         continue;
                     }
                     else if (input == "#clear")
@@ -70,6 +77,12 @@ namespace Vader
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     syntaxTree.Root.WriteTo(Console.Out);
+                    Console.ResetColor();
+                }
+                if (showProgram)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    compilation.EmitTree(Console.Out);
                     Console.ResetColor();
                 }
 
