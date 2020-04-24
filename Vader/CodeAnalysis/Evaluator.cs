@@ -37,26 +37,11 @@ namespace Vader.CodeAnalysis
                 case BoundNodeKind.WhileStatement:
                     EvaluateWhileStatement((BoundWhileStatement)statement);
                     break;
-                case BoundNodeKind.ForStatement:
-                    EvaluateForStatement((BoundForStatement)statement);
-                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)statement);
                     break;
                 default:
                     throw new Exception($"Error: Unexpected statement {statement.Kind}");
-            }
-        }
-
-        private void EvaluateForStatement(BoundForStatement statement)
-        {
-            var lowerBound = (int)EvaluateExpression(statement.LowerBound);
-            var upperBound = (int)EvaluateExpression(statement.UpperBound);
-
-            for (var i = lowerBound; i <= upperBound; i++)
-            {
-                _variables[statement.Variable] = i;
-                EvaluateStatement(statement.Body);
             }
         }
 
