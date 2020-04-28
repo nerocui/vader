@@ -72,7 +72,7 @@ namespace Vader
                 var compilation = previous == null 
                                     ? new Compilation(syntaxTree)
                                     : previous.ContinueWith(syntaxTree);
-                var result = compilation.Evaluate(variables);
+                
                 if (showTree)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -85,7 +85,8 @@ namespace Vader
                     compilation.EmitTree(Console.Out);
                     Console.ResetColor();
                 }
-
+                
+                var result = compilation.Evaluate(variables);
                 if (!result.Diagnostics.Any())
                 {
                     Console.ForegroundColor = ConsoleColor.Magenta;

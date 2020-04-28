@@ -8,6 +8,7 @@ namespace Vader.CodeAnalysis.Binding
         BinaryExpression,
         VariableExpression,
         AssignmentExpression,
+        VariableDeclaration,
 
         //Statements
         BlockStatement,
@@ -15,6 +16,8 @@ namespace Vader.CodeAnalysis.Binding
         IfStatement,
         WhileStatement,
         ForStatement,
-        VariableDeclaration,
+        GoToStatement,
+        LabelStatement,
+        ConditionalGotoStatement,
     }
 }

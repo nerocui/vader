@@ -6,10 +6,10 @@ namespace Vader.CodeAnalysis
 {
     internal sealed partial class Evaluator
     {
-        private readonly BoundStatement _root;
+        private readonly BoundBlockStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
         private object _lastValue;
-        public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
+        public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
         {
             _root = root;
             _variables = variables;
@@ -17,47 +17,47 @@ namespace Vader.CodeAnalysis
 
         public object Evaluate()
         {
-            EvaluateStatement(_root);
-            return _lastValue;
-        }
-
-        private void EvaluateStatement(BoundStatement statement)
-        {
-            switch (statement.Kind)
+            var labelToIndex = new Dictionary<LabelSymbel, int>();
+            for (var i = 0; i < _root.Statements.Length; i++)
             {
-                case BoundNodeKind.BlockStatement:
-                    EvaluateBlockStatement((BoundBlockStatement)statement);
-                    break;
-                case BoundNodeKind.VariableDeclaration:
-                    EvaluateVariableDeclaration((BoundVariableDeclaration)statement);
-                    break;
-                case BoundNodeKind.IfStatement:
-                    EvaluateIfStatement((BoundIfStatement)statement);
-                    break;
-                case BoundNodeKind.WhileStatement:
-                    EvaluateWhileStatement((BoundWhileStatement)statement);
-                    break;
-                case BoundNodeKind.ExpressionStatement:
-                    EvaluateExpressionStatement((BoundExpressionStatement)statement);
-                    break;
-                default:
-                    throw new Exception($"Error: Unexpected statement {statement.Kind}");
+                if (_root.Statements[i] is BoundLabelStatement l)
+                    labelToIndex.Add(l.Label, i + 1);
             }
-        }
 
-        private void EvaluateWhileStatement(BoundWhileStatement statement)
-        {
-            while ((bool)EvaluateExpression(statement.Condition))
-                EvaluateStatement(statement.Body);
-        }
-
-        private void EvaluateIfStatement(BoundIfStatement statement)
-        {
-            var condition = (bool)EvaluateExpression(statement.Condition);
-            if (condition)
-                EvaluateStatement(statement.ThenStatement);
-            else if (statement.ElseStatement != null)
-                EvaluateStatement(statement.ElseStatement);
+            var index = 0;
+            while (index < _root.Statements.Length)
+            {
+                var s = _root.Statements[index];
+                switch (s.Kind)
+                {
+                    case BoundNodeKind.VariableDeclaration:
+                        EvaluateVariableDeclaration((BoundVariableDeclaration)s);
+                        index++;
+                        break;
+                    case BoundNodeKind.ExpressionStatement:
+                        EvaluateExpressionStatement((BoundExpressionStatement)s);
+                        index++;
+                        break;
+                    case BoundNodeKind.GoToStatement:
+                        var gs = (BoundGoToStatement)s;
+                        index = labelToIndex[gs.Label];
+                        break;
+                    case BoundNodeKind.ConditionalGotoStatement:
+                        var cgs = (BoundConditionalGotoStatement)s;
+                        var condition = (bool)EvaluateExpression(cgs.Condition);
+                        if (condition && !cgs.JumpIfFalse || !condition && cgs.JumpIfFalse)
+                            index = labelToIndex[cgs.Label];
+                        else
+                            index++;
+                        break;
+                    case BoundNodeKind.LabelStatement:
+                        index++;
+                        break;
+                    default:
+                        throw new Exception($"Error: Unexpected statement {s.Kind}");
+                }
+            }
+            return _lastValue;
         }
 
         private void EvaluateVariableDeclaration(BoundVariableDeclaration statement)
@@ -70,12 +70,6 @@ namespace Vader.CodeAnalysis
         private void EvaluateExpressionStatement(BoundExpressionStatement statement)
         {
             _lastValue = EvaluateExpression(statement.Expression);
-        }
-
-        private void EvaluateBlockStatement(BoundBlockStatement boundBlockStatement)
-        {
-            foreach (var statement in boundBlockStatement.Statements)
-                EvaluateStatement(statement);
         }
 
         private object EvaluateExpression(BoundExpression node)
