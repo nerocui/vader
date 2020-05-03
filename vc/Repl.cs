@@ -272,7 +272,6 @@ namespace Vader
                 view.CurrentLine--;
                 document[view.CurrentLine] = previoudLine + currentLine;
                 view.CurrentCharacter = previoudLine.Length;
-                return;
             }
             else
             {
@@ -291,10 +290,19 @@ namespace Vader
             var line = document[lineIndex];
             var start = view.CurrentCharacter;
             if (start >= line.Length)
-                return;
-            var before = line.Substring(0, start);
-            var after = line.Substring(start + 1);
-            document[lineIndex] = before + after;
+            {
+                if (view.CurrentLine == document.Count - 1)
+                    return;
+                var nextLine = document[view.CurrentLine + 1];
+                document[view.CurrentLine] += nextLine;
+                document.RemoveAt(view.CurrentLine + 1);
+            }
+            else
+            {
+                var before = line.Substring(0, start);
+                var after = line.Substring(start + 1);
+                document[lineIndex] = before + after;
+            }
         }
 
         private void HandleHome(ObservableCollection<string> document, SubmissionView view)
@@ -335,6 +343,8 @@ namespace Vader
 
         private void UpdateDocumentFromHistory(ObservableCollection<string> document, SubmissionView view)
         {
+            if (_submissionHistory.Count == 0)
+                return;
             document.Clear();
             var historyItem = _submissionHistory[_submissionHistoryIndex];
             var lines = historyItem.Split(Environment.NewLine);
