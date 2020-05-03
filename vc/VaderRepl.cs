@@ -118,6 +118,15 @@ namespace Vader
             }
         }
 
+        private static SyntaxToken GetLastToken(SyntaxNode node)
+        {
+            if (node is SyntaxToken token)
+                return token;
+
+            // A syntax node should always contain at least 1 token.
+            return GetLastToken(node.GetChildren().Last());
+        }
+
         protected override bool IsCompleteSubmission(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -125,7 +134,8 @@ namespace Vader
             
             var syntaxTree = SyntaxTree.Parse(text);
 
-            if (syntaxTree.Diagnostics.Any())
+            // Use Statement because we need to exclude the EndOfFileToken.
+            if (GetLastToken(syntaxTree.Root.Statement).IsMissing)
                 return false;
             
             return true;
