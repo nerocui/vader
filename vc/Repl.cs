@@ -24,7 +24,6 @@ namespace Vader
                     EvaluateSubmission(text);
                 _submissionHistory.Add(text);
                 _submissionHistoryIndex = 0;
-                Console.ResetColor();
             }
         }
 
@@ -65,7 +64,7 @@ namespace Vader
                         Console.Write("· ");
                     Console.ResetColor();
                     _lineRenderer(line);
-                    Console.Write(new string(' ', Console.WindowWidth - line.Length));
+                    Console.WriteLine(new string(' ', Console.WindowWidth - line.Length));
                     lineCount++;
                 }
                 var numberOfBlankLine = _renderedLineCount - lineCount;
@@ -181,7 +180,7 @@ namespace Vader
                         break;
                 }
             }
-            if (key.Modifiers == ConsoleModifiers.Control)
+            else if (key.Modifiers == ConsoleModifiers.Control)
             {
                 switch (key.Key)
                 {
@@ -363,44 +362,6 @@ namespace Vader
         protected virtual void RenderLine(string line)
         {
             Console.Write(line);
-        }
-
-        private string EditSubmissionOld()
-        {
-            StringBuilder textBuilder = new StringBuilder();
-            while (true)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                if (textBuilder.Length == 0)
-                    Console.Write(">");
-                else
-                    Console.Write("· ");
-                Console.ResetColor();
-
-                var input = Console.ReadLine();
-                var isBlank = string.IsNullOrWhiteSpace(input);
-
-                if (textBuilder.Length == 0)
-                {
-                    if (isBlank)
-                    {
-                        return null;
-                    }
-                    else if (input.StartsWith("#"))
-                    {
-                        EvaluateMetaCommand(input);
-                        continue;
-                    }
-                }
-
-                textBuilder.AppendLine(input);
-                var text = textBuilder.ToString();
-
-                if (!IsCompleteSubmission(text))
-                    continue;
-                
-                return text;
-            }
         }
 
         protected virtual void EvaluateMetaCommand(string input)
