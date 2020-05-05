@@ -21,10 +21,16 @@ namespace Vader
             {
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
+                var isIdentifier = token.Kind == SyntaxKind.IdentifierToken;
                 if (isKeyword)
                     Console.ForegroundColor = ConsoleColor.Blue;
+                else if (isIdentifier)
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                else if (isNumber)
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                 else if (!isNumber)
                     Console.ForegroundColor = ConsoleColor.DarkGray;
+                
                 
                 Console.Write(token.Text);
                 Console.ResetColor();
@@ -48,6 +54,7 @@ namespace Vader
                     break;
                 case "#reset":
                     _previous = null;
+                    _variables.Clear();
                     break;
                 default:
                     base.EvaluateMetaCommand(input);
@@ -115,6 +122,7 @@ namespace Vader
                     Console.Write(suffix);
                     Console.WriteLine();
                 }
+                Console.WriteLine();
             }
         }
 
@@ -126,7 +134,7 @@ namespace Vader
             var syntaxTree = SyntaxTree.Parse(text);
 
             // Use Statement because we need to exclude the EndOfFileToken.
-            if (syntaxTree.Root.GetLastToken().IsMissing)
+            if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
                 return false;
             
             return true;

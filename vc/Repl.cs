@@ -17,7 +17,7 @@ namespace Vader
             {
                 var text = EditSubmission();
                 if (string.IsNullOrEmpty(text))
-                    continue;
+                    return;
                 if (!text.Contains(Environment.NewLine) && text.StartsWith("#"))
                     EvaluateMetaCommand(text);
                 else
@@ -210,6 +210,11 @@ namespace Vader
             InsertLine(document, view);
         }
 
+        private void HandleControlEnter(ObservableCollection<string> document, SubmissionView view)
+        {
+            InsertLine(document, view);
+        }
+
         private static void InsertLine(ObservableCollection<string> document, SubmissionView view)
         {
             var remainder = document[view.CurrentLine].Substring(view.CurrentCharacter);
@@ -243,11 +248,6 @@ namespace Vader
         {
             if (view.CurrentLine < document.Count - 1)
                 view.CurrentLine++;
-        }
-
-        private void HandleControlEnter(ObservableCollection<string> document, SubmissionView view)
-        {
-            InsertLine(document, view);
         }
 
         private void HandleTyping(ObservableCollection<string> document, SubmissionView view, string text)
