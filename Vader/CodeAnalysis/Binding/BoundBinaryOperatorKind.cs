@@ -7,8 +7,15 @@ namespace Vader.CodeAnalysis.Binding
         Multiplication,
         Division,
         LogicalAnd,
+        BitWiseAnd,
         LogicalOr,
+        BitWiseOr,
+        BitWiseExclusiveOr,
         Equals,
-        NotEquals
+        NotEquals,
+        Less,
+        LessOrEquals,
+        Greater,
+        GreaterOrEquals,
     }
 }

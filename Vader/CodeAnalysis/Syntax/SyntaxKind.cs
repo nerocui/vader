@@ -13,13 +13,24 @@ namespace Vader.CodeAnalysis.Syntax
         SlashToken,
         EqualsToken,
         BangToken,
+        AmpersandToken,
         AmpersandAmpersandToken,
         PipePipeToken,
+        PipeToken,
         EqualEqualToken,
         BangEqualToken,
+        LessToken,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
         IdentifierToken,
-        OpenParenthesisoken,
+        OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
+        TildeToken,
+        CaretToken,
+
 
         //expressions
         BinaryExpression,
@@ -29,8 +40,27 @@ namespace Vader.CodeAnalysis.Syntax
         NameExpression,
         AssignmentExpression,
 
-        //Literals
+        //Literals/keyword
         FalseKeyword,
         TrueKeyword,
+        LetKeyword,
+        VarKeyword,
+        IfKeyword,
+        ElseKeyword,
+        WhileKeyword,
+        ForKeyword,
+        ToKeyword,
+
+        //Nodes
+        CompilationUnit,
+        ElseClause,
+
+        //Statements
+        BlockStatement,
+        ExpressionStatement,
+        VariableDeclaration,
+        IfStatement,
+        WhileStatement,
+        ForStatement,
     }
 }

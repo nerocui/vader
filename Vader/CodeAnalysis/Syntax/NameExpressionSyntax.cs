@@ -4,12 +4,12 @@ namespace Vader.CodeAnalysis.Syntax
 {
     public sealed class NameExpressionSyntax : ExpressionSyntax
     {
-        public NameExpressionSyntax(SyntaxToken identitifierToken)
+        public NameExpressionSyntax(SyntaxToken identifierToken)
         {
-            IdentitifierToken = identitifierToken;
+            IdentifierToken = identifierToken;
         }
 
-        public SyntaxToken IdentitifierToken { get; }
+        public SyntaxToken IdentifierToken { get; }
 
         public override SyntaxKind Kind => SyntaxKind.NameExpression;
     }
